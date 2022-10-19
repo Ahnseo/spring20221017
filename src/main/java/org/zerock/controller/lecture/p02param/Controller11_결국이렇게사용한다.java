@@ -30,7 +30,7 @@ public class Controller11_결국이렇게사용한다 {
 		//@RequestParam 이 붙은 것으로 간주함.
 		System.out.println(address);
 	}
-	
+	//#######################################################################################
 	//### 결국, 생략에 생략을 거쳐서 이렇게 사용되는데, 모르면, 잘안보임 ####################
 	//연습) /ex11/sub04?city=NewYork&age=90&name=donald
 	@GetMapping("sub04")
@@ -39,4 +39,5 @@ public class Controller11_결국이렇게사용한다 {
 		System.out.println(age);
 		System.out.println(name);
 	}
+	//#######################################################################################
 }
