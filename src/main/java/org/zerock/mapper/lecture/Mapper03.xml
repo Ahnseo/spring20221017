@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.zerock.mapper.lecture.Mapper03">
+	
+	
+	<select id="getCustomer" resultMap="customerNameCountryMap">
+		SELECT CustomerName, Country
+		FROM Customers
+		WHERE CustomerId = 77
+	</select>
+	<!-- ResultSet을 직접다루지 않기때문에, -->
+	<resultMap type="org.zerock.domain.lecture.JavaBean04" id="customerNameCountryMap">	
+								<!--  자바빈의 프로퍼티, Class 만들어서 연결해야함.-->
+		<result column="CustomerName" property="name"/>
+		<result column="Country" property="country"/>
+	</resultMap>
+	
+	<select id="getEmployee" resultMap="employeeNameMap">
+		 SELECT FirstName, LastName
+		 FROM Employees
+		 WHERE EmployeeId = 5
+	</select>
+	<resultMap type="org.zerock.domain.lecture.JavaBean05" id="employeeNameMap">
+		<result column="FirstName" property="firstName"/>
+		<result column="LastName" property="lastName"/>
+	</resultMap>
+	
+	<!-- column ="" 과 property="" 가 같다면, resultMap 생략가능 -->
+	<select id="getEmployee2" resultType="org.zerock.domain.lecture.JavaBean05">
+		 SELECT FirstName, LastName
+		 FROM Employees
+		 WHERE EmployeeId = 3
+	</select>
+	
+	<select id="getCustomer2" resultType="org.zerock.domain.lecture.JavaBean04">
+		SELECT CustomerName AS name ,
+			   Country
+		FROM Customers
+		WHERE CustomerId = 55
+	</select>
+	
+	<select id="getProduct" resultType="org.zerock.domain.lecture.JavaBean06">
+		SELECT ProductName AS name,
+				Price
+		FROM Products
+		WHERE ProductId = 8		
+	</select>
+	
+</mapper>

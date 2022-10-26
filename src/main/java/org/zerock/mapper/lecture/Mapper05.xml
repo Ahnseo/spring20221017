@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.zerock.mapper.lecture.Mapper05">
+
+<select id="getOrder2" resultMap="orderMap">
+	SELECT 
+		o.OrderId id,
+		o.OrderDate date,
+		e.EmployeeId employeeId,
+		e.FirstName employeeFirstName,
+		e.LastName employeeLastName
+	FROM Orders o 
+	JOIN Employees e 
+	ON o.EmployeeId = e.EmployeeId
+	WHERE OrderId =10248
+</select>
+<resultMap type="org.zerock.domain.lecture.JavaBean08" id="orderMap">
+	<result column="id" property="id"/>
+	<result column="date" property="date"/>
+	<association property="employee">
+		<result column="employeeId" property="employeeId"/>
+		<result column="employeeFirstName" property="firstName" />
+		<result column="employeeLastName" property="lastName"/> 
+	</association>
+</resultMap>
+
+<select id="getProduct" resultMap="ProductMap">
+	SELECT 
+		p.ProductID, 
+		p.ProductName, 
+		p.Price, 
+		s.SupplierID, 
+		s.SupplierName, 
+		s.Phone 
+	FROM Products p JOIN Suppliers s 
+	ON p.SupplierID = s.SupplierID 
+	WHERE p.ProductID = 10
+</select>
+<resultMap type="org.zerock.domain.lecture.JavaBean09" id="ProductMap">
+    <!-- tip. 첫줄 id 라고 하면, 성능이 향상된다고.. -->
+	<id column="ProductID" property="id"/>
+	<result column="ProductName" property="name"/>
+	<result column="Price" property="price"/>
+	<association property="supplier">
+		<id column="SupplierID" property="id"/>
+		<result column="SupplierName" property="name"/>
+		<result column="Phone" property="phone"/>
+	</association>
+</resultMap>
+
+</mapper>

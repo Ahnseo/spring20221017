@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.lecture.Mapper06">
+	<select id="getCategory" resultMap="categoryMap">
+		SELECT 
+			c.CategoryID,
+			c.CategoryName,
+			p.ProductName
+		FROM Categories c
+		JOIN Products p
+		On c.CategoryID = p.CategoryID
+		WHERE c.CategoryID = 7
+	</select>
+
+	<resultMap type="org.zerock.domain.lecture.JavaBean11"
+		id="categoryMap">
+		<id column="CategoryID" property="id" />
+		<result column="CategoryName" property="name" />
+		<collection property="productName" ofType="string">
+			<result column="ProductName" />
+		</collection>
+	</resultMap>
+
+	<select id="getSupplierProduct" resultMap="supplierProductMap">
+		SELECT s.SupplierID,
+		s.SupplierName,
+		p.ProductName
+		FROM Products p JOIN Suppliers s
+		ON p.SupplierID = s.SupplierID
+		WHERE s.SupplierID = 1
+	</select>
+	<resultMap type="org.zerock.domain.lecture.JavaBean12" id="supplierProductMap">
+		<result column="SupplierID" property="id"/>
+		<result column="SupplierName" property="name"/>
+		
+		<collection property="productName" ofType="string">
+			<result column="ProductName"/>
+		</collection>
+		
+	</resultMap>
+	
+	<select id="getBuyProducts" resultMap="getBuyProductsMap">
+		SELECT 
+			c.CustomerID,
+			c.CustomerName, 
+		    o.OrderID 
+		FROM Customers c 
+		JOIN Orders o 
+		ON c.CustomerID = o.CustomerID
+ 	    WHERE c.CustomerID = 1
+	</select>
+	
+	<!-- 한 명이 주문한 상품들 나열하기 -->
+	<resultMap type="org.zerock.domain.lecture.BuyProducts" id="getBuyProductsMap">
+		<result column="CustomerID" property="id"/>
+		<result column="CustomerName" property="name"/>
+		<collection property="orderIds" ofType="org.zerock.domain.lecture.Orders">
+			<result column="OrderID" property="orderId"/>
+		</collection>	
+	</resultMap>
+	
+	
+
+</mapper>
