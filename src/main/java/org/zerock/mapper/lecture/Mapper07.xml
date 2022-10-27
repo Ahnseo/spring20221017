@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.lecture.Mapper07">
+
+<select id="getCategory" resultMap="categoryMap">
+	SELECT 
+		c.CategoryID,
+    	c.CategoryName,
+    	p.ProductID,
+    	p.ProductName,
+    	p.Price
+	FROM Categories c JOIN Products p 
+	ON c.CategoryID = p.CategoryID
+	WHERE c.CategoryID = 7	
+</select>
+<resultMap type="org.zerock.domain.lecture.JavaBean13" id="categoryMap">
+	<!-- <id/> : primarykey 를 사용하여 프로그램 성능향상시킴  -->
+	<id column="CategoryID" property="id"/>
+	<result column="CategoryName" property="name"/>
+	<collection property="products" ofType="org.zerock.domain.lecture.JavaBean14">
+	<!-- <id/> : primarykey 를 사용하여 프로그램 성능향상시킴  -->
+		<id column="ProductID" property="id"/> 
+		<result column="ProductName" property="name"/>
+		<result column="Price" property="price"/>
+	</collection>
+</resultMap>
+
+<select id="getSupplier" resultMap="supplierMap">
+	SELECT 
+		s.SupplierID,
+		s.SupplierName,
+		p.ProductID,
+		p.ProductName,
+		p.Price
+	FROM Products p JOIN Suppliers s
+	ON p.SupplierID = s.SupplierID
+	WHERE s.SupplierID = 1
+</select>
+<resultMap type="org.zerock.domain.lecture.JavaBean15" id="supplierMap">
+	<id column="SupplierID" property="id"/>
+	<result column="SupplierName" property="name"/>
+	
+	<collection property="products" ofType="org.zerock.domain.lecture.JavaBean14">
+		<id column="ProductID" property="id"/>
+		<result column="ProductName" property="name"/>
+		<result column="Price" property="price"/>
+	</collection>
+</resultMap>
+
+
+
+</mapper>
+
+
+
+
+

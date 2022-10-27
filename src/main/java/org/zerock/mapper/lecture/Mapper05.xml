@@ -40,7 +40,7 @@
 	WHERE p.ProductID = 10
 </select>
 <resultMap type="org.zerock.domain.lecture.JavaBean09" id="ProductMap">
-    <!-- tip. 첫줄 id 라고 하면, 성능이 향상된다고.. -->
+<!-- <id/> : primarykey 를 사용하여 프로그램 성능향상시킴  -->
 	<id column="ProductID" property="id"/>
 	<result column="ProductName" property="name"/>
 	<result column="Price" property="price"/>

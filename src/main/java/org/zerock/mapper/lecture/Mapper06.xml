@@ -55,7 +55,8 @@
 	
 	<!-- 한 명이 주문한 상품들 나열하기 -->
 	<resultMap type="org.zerock.domain.lecture.BuyProducts" id="getBuyProductsMap">
-		<result column="CustomerID" property="id"/>
+		<!-- <id/> : primarykey 를 사용하여 프로그램 성능향상시킴  -->
+		<id column="CustomerID" property="id"/>
 		<result column="CustomerName" property="name"/>
 		<collection property="orderIds" ofType="org.zerock.domain.lecture.Orders">
 			<result column="OrderID" property="orderId"/>

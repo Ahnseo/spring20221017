@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.lecture.Mapper10">
+	<delete id="removeCustomer">
+	DELETE FROM Customers
+	WHERE CustomerID = 90
+	</delete>
+	
+	<delete id="removeCustomerById">
+	DELETE FROM Customers
+	WHERE CustomerId = #{id}
+	</delete>
+	
+	<delete id="removeEmployeeById">
+	DELETE FROM Employees
+	WHERE EmployeeId = ${id}
+	</delete>
+	
+	<insert id="addCustomer">
+	INSERT INTO Customers
+	(CustomerName, ContactName, Address, City, PostalCode, Country)
+	VALUES ('ahnseojung', 'ahnseoj', 'dangsan', 'seoul', '27702', 'korea')
+	</insert>
+	
+	<insert id="addSupplier">
+	INSERT INTO Suppliers
+	(SupplierName, ContactName, Address, City, PostalCode, Country, Phone)
+	VALUES ('ahnseojung', 'ahnseoj', 'YoungGu', 'seoul', '27720', 'korea','82) 010-3329-9716')
+	</insert>
+	
+	<insert id="addCustomerBean">
+	INSERT INTO Customers
+	(CustomerName, ContactName, Address, City, PostalCode, Country)
+	VALUES (#{name}, #{contactName}, #{address}, #{city}, #{postalCode}, #{country})
+	</insert>
+	
+	<!-- 연습 -->
+	<insert id="addSupplierBeans">
+	INSERT INTO Suppliers
+	(SupplierName, ContactName, Address, City, PostalCode, Country, Phone)
+	VALUES(#{supplierName},#{contactName},#{address},#{city},#{postalCode},#{country},#{phone})
+	</insert>
+	
+	<select id="getSupplier" resultType="org.zerock.domain.lecture.JavaBean19">
+		SELECT * FROM Suppliers
+	</select>
+	
+	
+	
+	
+	
+</mapper>
