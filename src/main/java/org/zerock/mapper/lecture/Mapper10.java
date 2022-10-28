@@ -25,4 +25,10 @@ public interface Mapper10 {
 		//insert & select
 		int addSupplierBeans(JavaBean19 supplier);
 		List <JavaBean19> getSupplier();
+		
+		int insertSupplierAndGetKey(JavaBean19 supplier);
+		
+		int getSupplierAndGeneratedKey(JavaBean19 s);
+		
+		
 }

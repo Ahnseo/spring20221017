@@ -41,15 +41,26 @@
 	<insert id="addSupplierBeans">
 	INSERT INTO Suppliers
 	(SupplierName, ContactName, Address, City, PostalCode, Country, Phone)
-	VALUES(#{supplierName},#{contactName},#{address},#{city},#{postalCode},#{country},#{phone})
+	VALUES(#{name},#{contactName},#{address},#{city},#{postalCode},#{country},#{phone})
 	</insert>
 	
 	<select id="getSupplier" resultType="org.zerock.domain.lecture.JavaBean19">
 		SELECT * FROM Suppliers
 	</select>
 	
+	<!-- sub09 Generated key =id 얻기  -->
+	<insert id="insertSupplierAndGetKey" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO Suppliers
+	(SupplierName, ContactName, Address, City, PostalCode, Country, Phone)
+	VALUES(#{name},#{contactName},#{address},#{city},#{postalCode},#{country},#{phone})
+	</insert>
 	
-	
+	<!-- 연습 sub10 -->
+	<insert id="getSupplierAndGeneratedKey" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO Suppliers
+	(SupplierName, ContactName, Address, City, PostalCode, Country, Phone)
+	VALUES(#{name}, #{contactName}, #{address}, #{city}, #{postalCode}, #{country}, #{phone})
+	</insert>
 	
 	
 </mapper>

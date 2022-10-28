@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class JavaBean18 {
-	//private int customerID; xxxx
+	//Customer DTO
+	private int id;
 	private String name;
 	private String contactName;
 	private String address;

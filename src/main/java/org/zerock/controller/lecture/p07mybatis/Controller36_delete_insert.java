@@ -75,26 +75,66 @@ public class Controller36_delete_insert {
 
 	}
 	
-	@GetMapping("sub08")
+	@GetMapping("sub08")// 포워드 리다이렉트
 	public String returnThisJsp() {
+		// 포워드 함. /WEB-INF/views/ex36/sub08.jsp
 		return "ex36/sub08";
+		
 	}
-	@PostMapping("sub08")
+	@PostMapping("sub08")// 포워드 리다이렉트
 	public void method8(@ModelAttribute("supplier") JavaBean19 supplier, RedirectAttributes rttr) {
+		                   //@ModelAttribute: req param 수집 가공, add attr		
+		//1. req param 수집 가공
+		//2. 비지니스 로직
+		//3. add attr
+		//4. 포워드 리다이렉트
+		
 		int cnt = mapper10.addSupplierBeans(supplier);
 		System.out.println(cnt + "개 자료저장됨");
-		
-		
+
 		//저장한 정보는 jsp에서 나타내기
 		
 		List <JavaBean19> supplierList = mapper10.getSupplier();		
-		supplierList.forEach( e-> System.out.println(e));
-		
-		rttr.addFlashAttribute("supplierList", supplierList);
-		// 콘솔 출력은 되는데, jsp에 addAttribute 안되는건가? ? ?
+		supplierList.forEach( e-> System.out.println(e)); 
+		// 콘솔에 전부 출력하기
 		
 	}
+	// #### id 값 얻기   (Primary Key, auto increament )
+	@GetMapping("sub09")
+	public String getMethod9() {
+		// String return  ex36/sub08.jsp 포워드함
+		return "ex36/sub08";
+	}
+	@PostMapping("sub09")
+	public String postMethod9(JavaBean19 supplier, RedirectAttributes rttr) {
+		System.out.println("key: "+ supplier.getId());
+		 
+		int cnt = mapper10.insertSupplierAndGetKey(supplier);
+		System.out.println(cnt + "개 고객정보 저장");
+		
+		rttr.addFlashAttribute("message", supplier.getId()+"번 고객 등록 완료");
+		return "redirect:/ex36/sub09";
+	}
 	
-	
+	// #### id 값 얻기   (Primary Key, auto increament )
+	@GetMapping("sub10")
+	public String getMethod10() {
+		//forward to /WEB-INF/views/ex36/sub08.jsp
+		return "ex36/sub08";
+	}
+	@PostMapping("sub10")
+	public String postMethod10( JavaBean19 supplier, RedirectAttributes rttr ) {
+		// req  수집 가공 JavaBean19에
+		// 비지니스 로직 :supplier 테이블에 레코드 입력 , generated key 얻기
+		int cnt = mapper10.getSupplierAndGeneratedKey(supplier);
+		System.out.println(supplier.getId()+"번 공급자" + cnt + "개 등록됨");
+		
+		
+		// add Attribute 
+		rttr.addFlashAttribute("message", supplier.getId()+"번 공급자 등록 완료");
+		// redirect /ex36/sub10
+		return "redirect:/ex36/sub10";
+
+	}
 	
 }

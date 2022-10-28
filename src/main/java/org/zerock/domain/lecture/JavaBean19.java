@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class JavaBean19 {
-	private int supplierID;
-	private String supplierName;
+	//Supplier DTO
+	private int id;
+	private String name;
 	private String contactName; 
 	private String address;
 	private String city;
