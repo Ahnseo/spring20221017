@@ -13,7 +13,7 @@ public class Controller09_RequestParam {
 	
 	
 	//@RequestParam 바인딩(묶음)역할, 같은 name(또는value) 의 값들을 나열함
-	//   /ex09/sub01?name=seoul
+	//   /ex09/sub01?name=address
 	@GetMapping("sub01")
 	public void method1(@RequestParam (name="address") String a ) {
 		System.out.println("address" + a);
