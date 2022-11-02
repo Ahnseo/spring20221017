@@ -10,40 +10,44 @@
 <title>Insert title here</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
 	<div>
 		<my:navBar/>
 	</div>
-	
-	
-	<h1>
-		<c:url value="/board/modify" var="modifyLink">
-			<c:param name="id" value="${board.id }"></c:param>
-		</c:url>
-		${board.id }번 게시물 
-		<a class="btn-btn-warning" href="${modifyLink }">
-			수정
-			<i class="fa-solid fa-pen-to-square"></i>
-		</a>
-	</h1>
-	<div class="mb-3">
-		<label for="" class="form-label">제목</label>
+	<div class="container-md">
+	  <div class="row">
+	   <div class="col">
+		<h1>
+			<c:url value="/board/modify" var="modifyLink">
+				<c:param name="id" value="${board.id }"></c:param>
+			</c:url>
+			${board.id }번 게시물 
+			<a class="btn-btn-warning" href="${modifyLink }">
+				수정
+				<i class="fa-solid fa-pen-to-square"></i>
+			</a>
+		</h1>
+		<div class="mb-3">
+			<label for="" class="form-label">제목</label>
+		</div>
+		<input class="form-control" type="text" name="title" value="${board.title }" readonly> 
+		<div class="mb-3">
+			<label for="">본문</label>
+		</div>
+		<textarea class="form-control" rows="5" cols="50" name="content" readonly >${board.content }</textarea> 
+		<div>
+			<label for="" class="form-label">작성자</label>
+		</div>
+		<input class="form-control" type="text" name="writer"  value="${board.writer }" readonly> 
+		<div>
+			<label for="" class="form-label">작성일시</label>
+		</div>
+		<input class="form-control" type="datetime-local" name="inserted" value="${board.inserted }" readonly> 
+	   </div>
+	  </div>
 	</div>
-	<input class="form-control" type="text" name="title" value="${board.title }" readonly> 
-	<div class="mb-3">
-		<label for="">본문</label>
-	</div>
-	<textarea class="form-control" rows="5" cols="50" name="content" readonly >${board.content }</textarea> 
-	<div>
-		<label for="" class="form-label">작성자</label>
-	</div>
-	<input class="form-control" type="text" name="writer"  value="${board.writer }" readonly> 
-	<div>
-		<label for="" class="form-label">작성일시</label>
-	</div>
-	<input class="form-control" type="datetime-local" name="inserted" value="${board.inserted }" readonly> 
-	
 	
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>

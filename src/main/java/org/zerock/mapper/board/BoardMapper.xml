@@ -4,6 +4,7 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.zerock.mapper.board.BoardMapper">
+
 	<insert id="insert">
 		INSERT INTO Board 
 			(  title,    content,    writer )
@@ -19,7 +20,22 @@
 			inserted
 		FROM
 			Board
-		ORDER BY id DESC		
+		WHERE 
+		<trim prefixOverrides="OR">
+			<if test="type == 'all' or type == 'title'">
+				OR title LIKE #{keyword} 		
+			</if>
+			<if test="type=='all' or type=='content'">
+				OR content LIKE #{keyword}
+			</if>
+			<if test="type=='all' or type=='writer'">
+				OR writer LIKE #{keyword}	
+			</if>
+		</trim>
+		ORDER BY 
+			id DESC	
+		LIMIT 
+			#{offset}, #{records}
 	</select>	
 	
 	<select id="get" resultType="org.zerock.domain.board.BoardDto">
@@ -32,6 +48,7 @@
 		FROM
 			Board
 		WHERE id = #{id}
+		
 	</select>
 	
 	<update id="update">
@@ -50,6 +67,25 @@
 	WHERE 
 		id =${id}
 	</delete>
+	
+	<select id="countAll" resultType="int">
+	SELECT 
+		Count(*)
+	FROM
+		Board	
+	WHERE 
+	<trim prefixOverrides="OR">
+			<if test="type == 'all' or type == 'title'">
+				OR title LIKE #{keyword} 		
+			</if>
+			<if test="type=='all' or type=='content'">
+				OR content LIKE #{keyword}
+			</if>
+			<if test="type=='all' or type=='writer'">
+				OR writer LIKE #{keyword}	
+			</if>
+		</trim>
+	</select>
 	
 </mapper>
 

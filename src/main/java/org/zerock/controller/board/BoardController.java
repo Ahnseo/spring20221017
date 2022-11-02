@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.domain.board.BoardDto;
+import org.zerock.domain.board.PageInfo;
 import org.zerock.service.board.boardService;
 
 @Controller
@@ -45,13 +46,22 @@ public class BoardController {
 	}
 
 	@GetMapping("list")
-	public void list(Model model) {
-		// request param
-		// 비지니스 로직
-		List<BoardDto> list = service.listBoard();
-		// add attribute
+	public void list(
+			// request parameter 수집 가공
+			@RequestParam(name = "t" ,defaultValue = "all") String type,
+			@RequestParam(name = "q" , defaultValue = "") String keyword,
+			@RequestParam(name = "page", defaultValue = "1") int page, // default ="1" 필요해서 생략하지 않고 코드 작성.  
+			PageInfo pageInfo, //@ModelAttribute(name="pageInfo") 생략됨, "pageInfo" auto create & add Attribute 
+			Model model 
+			) {
+		
+		// business logic : service 메소드 실행 
+		List<BoardDto> list = service.listBoard(page, pageInfo, keyword, type);
+				
+		// add attribute -> list.jsp el코드
 		model.addAttribute("boardList", list);
-		// forward -> list view
+		
+		// void type forward -> views/list.jsp
 	}
 	
 	@GetMapping("get")
@@ -79,9 +89,9 @@ public class BoardController {
 	public String modify(BoardDto board, RedirectAttributes rttr) {
 		int cnt = service.update(board);
 		if (cnt==1) {
-			rttr.addFlashAttribute("message", board.getId()+ "번 게시물이 수정되었습니다.");
+			rttr.addFlashAttribute("message", board.getId() + "번 게시물이 수정되었습니다.");
 		}else {
-			rttr.addFlashAttribute("message", board.getId()+"번 게시물이 수정되지 않았습니다.");
+			rttr.addFlashAttribute("message", board.getId() +"번 게시물이 수정되지 않았습니다.");
 		}
 		return "redirect:/board/list";
 	}
