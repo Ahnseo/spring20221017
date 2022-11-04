@@ -26,8 +26,8 @@ public class Service01 {
 	public void tranferMoney() {
 		// 1번 고객의 돈을 500원씩 2번 고객에게 전달
 		// 스프링 transaction 처리는 -> root-context.xml 으로 설정
-		mapper.updateBank(1, -500);
-		mapper.updateBank(2, +500);
+		//mapper.updateBank(1, -500);
+		//mapper.updateBank(2, +500);
 	}
 	
 }

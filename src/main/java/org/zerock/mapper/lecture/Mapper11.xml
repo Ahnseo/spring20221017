@@ -4,6 +4,14 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.zerock.mapper.lecture.Mapper11">
+
+<insert id="insertSupplier" keyProperty="id" useGeneratedKeys="true">
+	INSERT INTO suppliers
+	(name, contactName, address, city, postalCode, country, phone)
+	VALUES(#{name}, #{contactName}, #{address}, #{city}, #{postalCode}, #{country}, #{phone})
+
+</insert>
+
 <update id="updateCustomer">
 	UPDATE 
 		Customers
@@ -20,6 +28,7 @@
 
 <select id="getCustomerById" resultType="org.zerock.domain.lecture.JavaBean18">
 	SELECT 
+		CustomerId id,
 		CustomerName name,
 		ContactName,
 		Address,
