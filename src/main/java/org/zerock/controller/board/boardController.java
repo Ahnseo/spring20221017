@@ -9,25 +9,34 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.domain.board.BoardDto;
 import org.zerock.domain.board.PageInfo;
-import org.zerock.service.board.boardService;
+import org.zerock.service.board.BoardService;
 
 @Controller
 @RequestMapping("board")
-public class BoardController {
+public class boardController {
 
 	@Autowired
-	private boardService service;
+	private BoardService service;
 
 	@PostMapping("register")
-	public String register(BoardDto board, RedirectAttributes rttr) {
+	public String register(
+			BoardDto board,
+			RedirectAttributes rttr,
+			MultipartFile[] files) {
 		// 잘 동작하는지?
 		System.out.println(board);
+		System.out.println(files.length);			
+		for(MultipartFile file : files) {
+			System.out.println(file.getOriginalFilename());
+		}
+		// *파일 업로드 : 1. web.xml multipart-config 추가 / 2.form의 enctype="multipart/form-data" / 3.Controller의 메소드 argument type:MultipartFile
 		
 		// 비지니스 로직(Service)
-		int cnt = service.register(board);
+		int cnt = service.register(board, files);
 		
 		if (cnt==1) {
 			rttr.addFlashAttribute("message", "새 게시물이 등록되었습니다.");
@@ -43,6 +52,7 @@ public class BoardController {
 	public void register() {
 		// forward -> list register (게시물 작성 view로 바로 포워딩)
 		// WEB-INF/views/board/register
+		
 	}
 
 	@GetMapping("list")
@@ -57,19 +67,20 @@ public class BoardController {
 		
 		// business logic : service 메소드 실행 
 		List<BoardDto> list = service.listBoard(page, pageInfo, keyword, type);
-				
+							
 		// add attribute -> list.jsp el코드
 		model.addAttribute("boardList", list);
+		
 		
 		// void type forward -> views/list.jsp
 	}
 	
 	@GetMapping("get")
-	public void get(Model model ,@RequestParam(name = "id") int id) { 
+	public void getBoardById(Model model ,@RequestParam(name = "id") int id) { 
 					            //@RequestParam(name = "id") 생략가능
 		//req param
 		//비지니스 로직 (db에서 게시물 가져오기)
-		BoardDto board = service.get(id);
+		BoardDto board = service.getBoardById(id);
 		System.out.println(board); //콘솔 확인
 		
 		//add attribute
@@ -81,7 +92,7 @@ public class BoardController {
 	
 	@GetMapping("modify")
 	public void modify(Model model, int id) {
-		BoardDto board = service.get(id);
+		BoardDto board = service.getBoardById(id);
 		model.addAttribute("board", board);
 	}
 	
@@ -106,6 +117,8 @@ public class BoardController {
 		}
 		return "redirect:/board/list";
 	}
+	
+	
 }
 
 

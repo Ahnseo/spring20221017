@@ -81,9 +81,10 @@
 	<input type="text" id="supplierCountryInput13" placeholder="country">
 	<input type="text" id="supplierPhoneInput13" placeholder="phone">
 	<br>
-	<button id="#btn13">Create Supplier</button>
+	<button id="btn13">ex47/sub13 Create Supplier</button>
 	<br>
 	<div id="createSupplierDiv"></div>
+	
 	
 	<input type="number" name="" id="deleteSupplierSub15" placeholder="삭제할 공급자 번호">
 	<button id="btn15">공급자 번호 삭제 /ex47/sub15</button>
@@ -101,20 +102,15 @@
 		//***********sub15 delete **************
 		document.querySelector("#btn15").addEventListener("click", function(){
 			
-			const data = document.querySelector("#deleteSupplierSub15").value;
+			const id = document.querySelector("#deleteSupplierSub15").value;
 			
-			fetch(ctx +"/ex47/sub15", {
-										method:"delete",
-										headers :{ "Content-Type" : "application/json" },
-										body : JSON.stringify(data) 
-									  }
-			)
+			fetch(ctx +"/ex47/sub15/" + id, {method:"delete"})
 			.then(response => response.json())
 			.then(data => {document.querySelector("#deleteMessage").innerText = data.message});
 		});
 		
 		//***********sub13 create **************
-		document.querySelector("#btn13").addEventListener("click", function(){
+		 document.querySelector("#btn13").addEventListener("click", function(){
 			const name = document.querySelector("#supplierNameInput13").value;
 			const contactName = document.querySelector("#supplierContactNameInput13").value;
 			const address = document.querySelector("#supplierAddressInput13").value;
@@ -126,15 +122,17 @@
 			const data ={name, contactName, address, city, postalCode, country, phone};
 			
 			fetch(ctx + "/ex47/sub13", {
-										method : "post",
-										headers : { "Content-Type" : "application/json" },
-										body : JSON.stringify(data)
-										}
-			)
-			.then(response => response.json())
-			.then(data => {document.querySelector("#createSupplierDiv").innerText = data.message});
-		});
-		
+				method : "post",
+				headers : {
+					"Content-Type" : "application/json"
+				}, 
+				body : JSON.stringify(data)
+			})
+			.then(res => res.json())
+			.then(data => {
+				document.querySelector("#createSupplierDiv").innerText = data.message;
+			}); 
+		}); 
 		
 		//*********** sub10 update *************
 		document.querySelector("#btn10").addEventListener("click", function(){ 
@@ -143,7 +141,7 @@
 			const contactName = document.querySelector("#customerContactNameInput10").value;
 			const address = document.querySelector("#customerAddressInput10").value;
 			const city = document.querySelector("#customerCityInput10").value;
-			const postalCode = document.querySelector("#customerPostalCodeInput10").value;
+			const postalCode = document.querySelector("#supplierPostalCodeInput13").value;
 			const country = document.querySelector("#customerCountryInput10").value;
 			
 			const data = {id, name, contactName, address, city, postalCode, country};

@@ -20,7 +20,7 @@
 		<div class="col">
 		  <h3>게시물 작성</h3>
 		  
-		  <form action="" method="post">
+		  <form action="" method="post" enctype="multipart/form-data">
 			<div class="mb-3">
 			  <label for="">제목</label>
 			</div>
@@ -33,6 +33,11 @@
 				
 			<div class="mb-3">
 			  <label for="" class="form-label">본문</label>
+			</div>
+			<div>
+				<label for="" class="form-label">파일</label>
+				<input multiple="multiple" type="file" accept="image/*" class="gorm-control" name="files">
+				
 			</div>
 			<textarea class="form-control"  rows="5" cols="30" name="content"></textarea>	
 			

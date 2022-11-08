@@ -37,7 +37,7 @@
 			  <th>#</th>
 			  <th>제목</th>
 			  <th>작성자</th>
-			  <th>작성된 시간</th>
+			  <th>작성일시</th>
 		    </tr>
 		  </thead>
 		  <tbody>
@@ -49,11 +49,17 @@
 					<c:param name="id" value="${board.id }"/>
 				  </c:url>
 				  <a href="${getLink }">
-					${board.title }
+					${board.title } 
+					<c:if test="${board.countReply > 0 }">
+						<span class="badge text-bg-light">
+							<i class="fa-regular fa-comment-dots"></i>
+							${board.countReply }
+						</span>
+					</c:if>
 				  </a>
 				</td>
 				<td>${board.writer }</td>
-				<td>${board.inserted }</td>
+				<td>${board.ago }</td>
 			  </tr>
 			</c:forEach>
 		  </tbody>

@@ -38,8 +38,8 @@ public class Controller47_json_PathVariable_RCUD {
 	public Map<String, String > method1() {
 		 
 		return Map.of("address", "seoul", "name","ahnseoj", "job","student");
-
 	}
+	
 	@GetMapping("sub02")
 	@ResponseBody
 	public Map<String, Object > method2() {
@@ -134,25 +134,21 @@ public class Controller47_json_PathVariable_RCUD {
 	}
 	
 	//delete
-	@DeleteMapping("sub15")
+	@DeleteMapping("sub15/{id}")
 	@ResponseBody
-	public Map<String, String> method15(@RequestBody Integer id){
-		Map<String, String> map = new HashMap<String, String>();
+	public Map<String, Object> method15(@RequestBody Integer id){
+		Map<String, Object> map = new HashMap<>();
 		
 		int cnt = mapper.deleteSupplier(id);
 		if (cnt == 1 ) {
-			map.put("message", "삭제되었습니다.");
+			map.put("message", id + "번 공급자정보가 삭제되었습니다.");
 		}else {
-			map.put("message", "삭제되지 않았습니다.");
-			
+			map.put("message", id + "번 공급자정보가 삭제되지 않았습니다.");
 		}
-		return map;
 		
+		return map;
 	}
 	
-	
-	
-	
-	
+		
 	
 }

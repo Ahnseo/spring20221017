@@ -3,19 +3,20 @@ package org.zerock.domain.board;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import lombok.Data;
 
 @Data
-public class BoardDto {
+public class ReplyDto {
 	private int id;
-	private String title;
-	private String writer;
+	private int boardId;
 	private String content;
+	
+	@JsonFormat(shape = Shape.STRING)
 	private LocalDateTime inserted;
-	private int countReply;
-	private List<String> fileName; 
 	
 	public String getAgo() {
 		LocalDateTime now = LocalDateTime.now();
@@ -45,4 +46,6 @@ public class BoardDto {
 		
 		return result;
 	}
+	
 }
+
