@@ -13,15 +13,21 @@ public interface BoardMapper {
 
 	BoardDto selectBoardById(int id);
 	
-	int update(BoardDto board);
+	int update(BoardDto board );
 
 	int remove(int id);
 
 	int countAll(String keyword, String type);
 
-	int insertFile(int id, String fileName);
-
 	int deleteFilesByBoardId(int id);
+	
+	
+	
+	int insertFile(int boardId, String fileName);
+
+	int updateFile(int boardId, String fileName);
+
+	int deleteFileByBoardIdAndFileName(int boardId, String fileName);
 
 
 

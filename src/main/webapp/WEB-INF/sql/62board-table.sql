@@ -76,22 +76,28 @@ CREATE TABLE Files(
     name VARCHAR(512) NOT NULL,
     FOREIGN KEY (boardId) REFERENCES Board(id)
 );
-
+DESC Board;
 DESC Files;
+DESC Reply;
 
+
+SELECT * FROM Files;
+	
 SELECT 
-			b.id,
-			b.title,
-			b.writer,
-			b.content,
-			b.inserted,
-			f.name fileName
-		FROM Board b
-		LEFT JOIN Files f
-		ON b.id = f.boardId	
-				
-		WHERE b.id = 131596
-        ;
+	b.id,
+	b.title,
+	b.writer,
+	b.inserted,
+	COUNT( DISTINCT r.id) countReply,
+	COUNT( DISTINCT f.id) countFiles
+FROM Board b
+LEFT JOIN Reply r ON b.id = r.boardId	
+LEFT JOIN Files f ON b.id = f.boardId	
+
+GROUP BY b.id
+ORDER BY b.id DESC;
+	
+        
 
 
 

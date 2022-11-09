@@ -24,9 +24,14 @@ public class BoardService {
 	
 	@Transactional
 	public int register(BoardDto board, MultipartFile[] files) {
-		//db 게시물 정보 저장, xml : <insert id="insertBoard" keyProperty="id" useGeneratedKeys="true">
-		 int cnt = boardMapper.insertBoard(board);
+		
+		//(버그 수정 2022.11.09) 제목을 꼭 입력해야하길 바람. => register.jsp => JavaScript 처리
+		
+		//db 게시물 정보 저장, xml : <insert id="insertBoard" keyProperty="id" useGeneratedKeys="true"> 	 
+		int cnt = boardMapper.insertBoard(board);	 
 		 
+
+		 //파일 업로드 하기
 		 for(MultipartFile file : files) {
 			 
 			 if(file != null && file.getSize() > 0) { 
@@ -59,16 +64,15 @@ public class BoardService {
 		int offset = (page - 1) * records; 
 		
 		int countAll = boardMapper.countAll("%"+keyword+"%", type); //SELECT COUNT(*) FROM Board
-		
-		System.out.println(countAll);
+		//System.out.println(countAll);
 		
 		int lastPageNumber = (countAll - 1) / records  + 1; 
 		
 		int leftPageNumber = (page - 1) / 10 * 10 + 1;	
 		
 		int rightPageNumber = leftPageNumber + 9;
-			System.out.println(lastPageNumber);
-			System.out.println(rightPageNumber);
+			//System.out.println(lastPageNumber);
+			//System.out.println(rightPageNumber);
 			rightPageNumber = Math.min(lastPageNumber, rightPageNumber);
 			
 				
@@ -105,8 +109,54 @@ public class BoardService {
 		model.addAttribute("board", board);	
 	}
 
-	public int update(BoardDto board) {
-		return boardMapper.update(board);
+	public int update(BoardDto board, MultipartFile[] files, List<String> removeFiles) {
+		int cnt = boardMapper.update(board);
+		
+		//checkbox remove : removefile checkBox 에서 fileName과 boardId 가 일치하면 삭제.
+		if(removeFiles != null ) {
+			for(String fileName : removeFiles) {
+				// db 지우기
+				int boardId = board.getId();
+				boardMapper.deleteFileByBoardIdAndFileName(boardId, fileName);
+				//실제 저장소안의 file 지우기
+				String path ="C:\\Users\\\\user\\Desktop\\study\\upload\\prj1\\board\\"+ boardId + "\\" + fileName;
+				File file = new File(path); 
+				file.delete();
+			}
+		}
+		
+
+		// 1.File table에서 같은 이름의 파일이 있는가? -> 지우기 (덮어씌우려공)
+		// 2.File table에 파일명 추가
+		// 3.실제 저장소에 파일 추가
+		// update는 useGeneratedKeys xxx 하지않는다. 이미 만들어진 boardId를 가져오면 되잖아?
+		
+		for(MultipartFile file : files) {
+			// 1.File table에서 같은 이름의 파일이 있는가? -> 지우기 (덮어씌우려공)
+			if (file != null && file.getSize() >0 ) { //파일명이 없으면 ,size() 1로 넘기기때문에				
+				int boardId = board.getId();
+				String fileName = file.getOriginalFilename();
+				boardMapper.deleteFileByBoardIdAndFileName(boardId, fileName);
+				boardMapper.insertFile(boardId, fileName);	
+				
+				// 2.File table에 파일명 추가
+				// 3.실제 저장소에 파일 추가
+				File folder = new File("C:\\Users\\user\\Desktop\\study\\upload\\prj1\\board\\" + board.getId());
+				folder.mkdirs();
+				
+				File dest = new File(folder, fileName);
+				
+				try {
+					file.transferTo(dest);
+				} catch (Exception e) {
+					// @Transactional은 RuntimeException에서만 rollback 됨
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		
+		return cnt;
 	}
 	
 	//두가지 일이 하나의 업무이므로 , 트렌젝셔날
@@ -116,6 +166,21 @@ public class BoardService {
 		replyMapper.deleteByBoardId(id);
 		//2.업로드 파일 또한 먼저지워줘야함.
 		boardMapper.deleteFilesByBoardId(id);
+		//2-2.저장소의 파일 지우기
+		String path ="C:\\Users\\\\user\\Desktop\\study\\upload\\prj1\\board\\"+ id;
+		File folder = new File(path); 
+		File[] listFiles = folder.listFiles(); //폴어안의		
+		if(listFiles != null) {	
+			for(File file : listFiles) {
+				file.delete();
+			}
+			folder.delete();
+		}else {
+			folder.delete();
+		}
+		
+		
+		
 		//int a = 3/0 ; RuntimeException의 경우, 댓글만 지워져서
 		//그래서 @Transactional 했어. 맨위에 @Service 와 함께 넣어도 무관하지.
 		

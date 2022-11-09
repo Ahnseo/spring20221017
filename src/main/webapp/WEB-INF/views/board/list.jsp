@@ -49,14 +49,20 @@
 					<c:param name="id" value="${board.id }"/>
 				  </c:url>
 				  <a href="${getLink }">
-					${board.title } 
+					${board.title} 
+				  </a>
 					<c:if test="${board.countReply > 0 }">
 						<span class="badge text-bg-light">
 							<i class="fa-regular fa-comment-dots"></i>
 							${board.countReply }
 						</span>
 					</c:if>
-				  </a>
+					<c:if test="${board.countFiles > 0 }">
+						<span class="badge text-bg-light">
+							<i class="fa-regular fa-file"></i>
+							${board.countFiles }
+						</span>
+					</c:if>
 				</td>
 				<td>${board.writer }</td>
 				<td>${board.ago }</td>
