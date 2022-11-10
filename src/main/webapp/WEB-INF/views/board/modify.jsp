@@ -2,6 +2,9 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="my" tagdir="/WEB-INF/tags"%>
+
+<%-- URLEncoder 패키지를 import --%>
+<%@ page import="java.net.*" %> 
 <!DOCTYPE html>
 <html>
 <head>
@@ -54,7 +57,7 @@
 				  </div>
 			  	</div>
 				<div class="mb-5">
-				  <img class="img-fluid img-thumbnail" alt="" src="/image/${board.id }/${fileName}">
+				  <img class="img-fluid img-thumbnail" src="${imgUrl }/${board.id }/${URLEncoder.encode(fileName, 'utf-8')}" alt="" >
 				</div>
 			  </div>
 		  	</c:forEach>

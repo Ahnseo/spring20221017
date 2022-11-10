@@ -167,7 +167,7 @@ public class BoardService {
 		//2.업로드 파일 또한 먼저지워줘야함.
 		boardMapper.deleteFilesByBoardId(id);
 		//2-2.저장소의 파일 지우기
-		String path ="C:\\Users\\\\user\\Desktop\\study\\upload\\prj1\\board\\"+ id;
+		String path ="C:\\Users\\user\\Desktop\\study\\upload\\prj1\\board\\"+ id;
 		File folder = new File(path); 
 		File[] listFiles = folder.listFiles(); //폴어안의		
 		if(listFiles != null) {	

@@ -2,6 +2,9 @@
     pageEncoding="UTF-8"%>      
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>   
 <%@ taglib prefix="my" tagdir="/WEB-INF/tags" %>
+
+<%-- URLEncoder 패키지를 import --%>
+<%@ page import="java.net.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,6 +21,7 @@
 	<div>
 		<my:navBar/>
 	</div>
+	
 	<div class="container-md">
 	  <div class="row">
 	   <div class="col">
@@ -44,7 +48,10 @@
 		<div>
 			<c:forEach items="${board.fileName}" var="fileName">
 				<div>
-					<img class="img-fluid img-thumbnail" alt="" src="/image/${board.id }/${fileName}">
+				<%-- https://spring-study-bucket-2022-11-10-ahnseoj.s3.ap-northeast-2.amazonaws.com/prj1/board/131600/%EB%B9%84%ED%8B%80%EC%A6%88.jpg --%>
+				<%-- /spring20221017/src/main/java/org/zerock/listener/CustomApplicationListener.java 파일에 초기설정함. 
+				imgURL = https://spring-study-bucket-2022-11-10-ahnseoj.s3.ap-northeast-2.amazonaws.com/prj1/board --%>
+					<img class="img-fluid img-thumbnail" src="${imgUrl }/${board.id }/${URLEncoder.encode(fileName, 'utf-8')}" alt="" >
 				</div>
 			</c:forEach>
 		</div>
