@@ -18,17 +18,15 @@ public interface BoardMapper {
 	int remove(int id);
 
 	int countAll(String keyword, String type);
-
-	int deleteFilesByBoardId(int id);
-	
 	
 	
 	int insertFile(int boardId, String fileName);
 
 	int updateFile(int boardId, String fileName);
 
+
+	int deleteFilesByBoardId(int id);
+
 	int deleteFileByBoardIdAndFileName(int boardId, String fileName);
-
-
 
 }

@@ -3,14 +3,22 @@ package org.zerock.service.board;
 import java.io.File;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+
 import org.zerock.domain.board.BoardDto;
 import org.zerock.domain.board.PageInfo;
 import org.zerock.mapper.board.BoardMapper;
 import org.zerock.mapper.board.ReplyMapper;
+
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @Transactional
@@ -22,6 +30,14 @@ public class BoardService {
 	@Autowired
 	private ReplyMapper replyMapper;
 	
+	@Autowired
+	private S3Client s3Client;
+	
+	@Value("${aws.s3.bucket}") //import org.springframework.beans.factory.annotation.Value;
+	private String bucketName;
+	
+	
+	/**  */
 	@Transactional
 	public int register(BoardDto board, MultipartFile[] files) {
 		
@@ -35,9 +51,14 @@ public class BoardService {
 		 for(MultipartFile file : files) {
 			 
 			 if(file != null && file.getSize() > 0) { 
-					 //db에 파일 정보 저장 : 파일명, 게시물id => db테이블 만들기
-					 boardMapper.insertFile(board.getId(), file.getOriginalFilename());
-				 //실제 파일이 어디 저장되는지?
+				 //db에 파일 정보 저장 : 파일명, 게시물id => db테이블 만들기
+				 boardMapper.insertFile(board.getId(), file.getOriginalFilename());
+				 
+				// AWS s3에 저장 (하드디스크에 저장하지 않기)
+				uploadFile(board.getId(), file); 
+					 
+				/*	 
+				 //실제 파일이 어디 저장되는지?  하드디스크에 저장해보기
 				 //board id(PrimaryKey이용한) 여러 새폴더 자동 생성하기
 				 File folder = new File("C:\\Users\\user\\Desktop\\study\\upload\\prj1\\board\\" + board.getId());
 				 folder.mkdirs();
@@ -51,6 +72,8 @@ public class BoardService {
 					e.printStackTrace();
 					throw new RuntimeException(e);
 				}
+				*/	 
+				 
 			} 
 		}
 		 
@@ -58,7 +81,9 @@ public class BoardService {
 		 return cnt;
 	}
 
-	                              // 파라미터 순서 잘지켜라
+	
+
+	/**  */                              // 파라미터 순서 잘지켜라
 	public List<BoardDto> listBoard(int page, PageInfo pageInfo, String keyword, String type) {
 		int records = 10;
 		int offset = (page - 1) * records; 
@@ -98,20 +123,24 @@ public class BoardService {
 		
 		return boardMapper.list(offset, records, "%"+keyword+"%", type);
 	}
-
+	
+	/** BoardId 가져오기 */
 	public BoardDto getBoardById(int id) {
 		
 		return boardMapper.selectBoardById(id);
 	}
-
+	
+	/** 수정된 정보를 최신화 시키기. forward => modify.jsp */
 	public void modify(int id, Model model) {
 		BoardDto board = boardMapper.selectBoardById(id);
 		model.addAttribute("board", board);	
 	}
 
-	public int update(BoardDto board, MultipartFile[] files, List<String> removeFiles) {
+	/** 수정 */
+	public int update(BoardDto board, MultipartFile[] addFiles, List<String> removeFiles) {
 		int cnt = boardMapper.update(board);
 		
+		// 1.Files table에서 같은 이름의 파일이 있는가? -> 지우기 (덮어씌우려공)
 		//checkbox remove : removefile checkBox 에서 fileName과 boardId 가 일치하면 삭제.
 		if(removeFiles != null ) {
 			for(String fileName : removeFiles) {
@@ -119,73 +148,100 @@ public class BoardService {
 				int boardId = board.getId();
 				boardMapper.deleteFileByBoardIdAndFileName(boardId, fileName);
 				//실제 저장소안의 file 지우기
-				String path ="C:\\Users\\\\user\\Desktop\\study\\upload\\prj1\\board\\"+ boardId + "\\" + fileName;
-				File file = new File(path); 
-				file.delete();
+				deleteFile(boardId, fileName);
 			}
 		}
-		
 
-		// 1.File table에서 같은 이름의 파일이 있는가? -> 지우기 (덮어씌우려공)
-		// 2.File table에 파일명 추가
-		// 3.실제 저장소에 파일 추가
-		// update는 useGeneratedKeys xxx 하지않는다. 이미 만들어진 boardId를 가져오면 되잖아?
-		
-		for(MultipartFile file : files) {
-			// 1.File table에서 같은 이름의 파일이 있는가? -> 지우기 (덮어씌우려공)
-			if (file != null && file.getSize() >0 ) { //파일명이 없으면 ,size() 1로 넘기기때문에				
+		// 2. aws s3 버켓에 업로드하기
+		for(MultipartFile file : addFiles) {
+			if (file != null && file.getSize() > 0 ) {				
 				int boardId = board.getId();
-				String fileName = file.getOriginalFilename();
-				boardMapper.deleteFileByBoardIdAndFileName(boardId, fileName);
-				boardMapper.insertFile(boardId, fileName);	
 				
-				// 2.File table에 파일명 추가
-				// 3.실제 저장소에 파일 추가
-				File folder = new File("C:\\Users\\user\\Desktop\\study\\upload\\prj1\\board\\" + board.getId());
-				folder.mkdirs();
+				//db에 수정하기.
+				boardMapper.deleteFileByBoardIdAndFileName(boardId, file.getOriginalFilename());
+				boardMapper.insertFile(boardId, file.getOriginalFilename());	
 				
-				File dest = new File(folder, fileName);
+				//aws s3 버켓에 업로드하기
 				
-				try {
-					file.transferTo(dest);
-				} catch (Exception e) {
-					// @Transactional은 RuntimeException에서만 rollback 됨
-					e.printStackTrace();
-					throw new RuntimeException(e);
-				}
+				uploadFile(board.getId(), file); 
+				
 			}
 		}
 		
 		return cnt;
 	}
 	
+	
+	/** 삭제  */
 	//두가지 일이 하나의 업무이므로 , 트렌젝셔날
 	//@Transactional
 	public int remove(int id) {
-		//1.게시물의 '댓글'들을 먼저 지우기, 실제 현업에서는 지우지않음, 전부 자산이기 때문에, 지웠다는 표시만함.
-		replyMapper.deleteByBoardId(id);
-		//2.업로드 파일 또한 먼저지워줘야함.
-		boardMapper.deleteFilesByBoardId(id);
-		//2-2.저장소의 파일 지우기
-		String path ="C:\\Users\\user\\Desktop\\study\\upload\\prj1\\board\\"+ id;
-		File folder = new File(path); 
-		File[] listFiles = folder.listFiles(); //폴어안의		
-		if(listFiles != null) {	
-			for(File file : listFiles) {
-				file.delete();
+		
+		//** aws s3 안에 파일 지우기
+		BoardDto board = boardMapper.selectBoardById(id);
+		List <String> fileNames = board.getFileName();
+		
+		//System.out.println(board.getId());
+		//System.out.println(id);
+		
+		if (fileNames != null) {
+			for(String fileName : fileNames) {
+				System.out.println(fileName);
+				
+				deleteFile(id, fileName);
+				
 			}
-			folder.delete();
-		}else {
-			folder.delete();
 		}
+		//String forderKey = "/prj1/board/" + board.getId() + "/";
+		//DeleteObjectRequest dorForder = DeleteObjectRequest.builder().bucket(bucketName).key(forderKey).build();
+		//s3Client.deleteObject(dorForder);
 		
+		//1.(DB) 게시물의 '댓글'들을 먼저 지우기, 실제 현업에서는 지우지않음, 전부 자산이기 때문에, 지웠다는 표시만함.
+		replyMapper.deleteByBoardId(id);
 		
+		//2.(DB) 업로드 파일 또한 먼저지워줘야함.
+		boardMapper.deleteFilesByBoardId(id);
 		
-		//int a = 3/0 ; RuntimeException의 경우, 댓글만 지워져서
-		//그래서 @Transactional 했어. 맨위에 @Service 와 함께 넣어도 무관하지.
-		
-		//2.게시물 지우기
+		//3.(DB) 게시물 최종 지우기
 		return boardMapper.remove(id);	
 	}
+
+	//################# 메소드 만든 #################################################################################
+	
+	private void deleteFile(int id, String fileName) {
+		String key = "prj1/board/" + id + "/" + fileName;
+		DeleteObjectRequest deleteObjectRequestFile = DeleteObjectRequest.builder()
+																		  .bucket(bucketName)
+																		  .key(key)
+																		  .build();
+		
+		s3Client.deleteObject(deleteObjectRequestFile);
+	}
+	
+	private void uploadFile(int id, MultipartFile file) {
+		try {
+			// 키 생성
+			String key = "prj1/board/" + id + "/" + file.getOriginalFilename();
+			
+			//putObjectRequest
+			PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+																.bucket(bucketName)
+																.key(key)
+																.acl(ObjectCannedACL.PUBLIC_READ) // 권한 설정
+																.build();
+			
+			//requestBody
+			RequestBody	requestBody	= RequestBody.fromInputStream(file.getInputStream(), file.getSize());	
+			
+			//object(파일) 업로드 하기
+			s3Client.putObject(putObjectRequest , requestBody);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+	
 	
 }

@@ -80,10 +80,10 @@
 			b.inserted,
 			f.id fileId,
 			f.name AS fileName
-		FROM Board b
-		LEFT JOIN Files f
-		ON b.id = f.boardId				
-		WHERE b.id = #{id}
+		FROM 
+			Board b LEFT JOIN Files f ON b.id = f.boardId				
+		WHERE 
+			b.id = #{id}
 	</select>
 	<resultMap type="org.zerock.domain.board.BoardDto" id="boardMap">
 		<id column="id" property="id"/>
