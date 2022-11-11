@@ -97,11 +97,18 @@ LEFT JOIN Files f ON b.id = f.boardId
 GROUP BY b.id
 ORDER BY b.id DESC;
 	
-        
+SELECT * FROM Board ORDER BY id desc;
 
 
+-- 회원가입을 위한 Member 테이블
+CREATE TABLE Member(
+	id VARCHAR(225) PRIMARY KEY,
+    password  VARCHAR(225) NOT NULL,
+    email VARCHAR(225) NOT NULL UNIQUE,
+    inserted DATETIME DEFAULT now()
+);
 
-
+SELECT * FROM Member ORDER BY inserted DESC;
 
 
 

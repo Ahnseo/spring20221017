@@ -21,7 +21,7 @@ public class boardController {
 
 	@Autowired
 	private BoardService service;
-
+	
 	@PostMapping("register")
 	public String register(
 			BoardDto board,
